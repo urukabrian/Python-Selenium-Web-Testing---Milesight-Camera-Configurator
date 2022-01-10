@@ -1,0 +1,1023 @@
+# Milesight Camera Configuration Tool/Script
+
+# Selenium Imports
+from selenium import webdriver
+from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support.ui import Select
+from selenium.webdriver.support import expected_conditions as ec
+
+import csv
+import os
+import time
+
+with open("C:/Users/buruka/Desktop/Scripts/Production/Camera Configurator/Milesight/camera_data_ori.csv") as file:
+	reader = csv.reader(file)
+	next(reader)
+	for ip, camera_name, web_interface, access_username, access_password, field_of_view, ip_octect_1, ip_octect_2, \
+		ip_octect_3, ip_octect_4, subnet_octect_1, subnet_octect_2, subnet_octect_3, subnet_octect_4, \
+		gateway_octect_1, gateway_octect_2, gateway_octect_3, gateway_octect_4, dns_octect_1, dns_octect_2, \
+		dns_octect_3, dns_octect_4, record_stream_type, VideoCodec, Resolution, FrameRate, BitRate, smart_stream, \
+		BitRateControl, profile, IFrame, ntp_server_address, ntp_server_update_interval, auto_reboot_day, \
+		auto_reboot_time, timezone, daylight_saving_time, snmp_v2c_write_community, snmp_v2c_read_community, \
+		snmp_v3_read_security_name, snmp_v3_read_level_of_security, snmp_v3_write_security_name, \
+		snmp_v3_write_level_of_security, authentication_password, private_key_password, snmp_port, \
+		http_port_number, https_port_number, rstp_port_number, rstp_playback_port_number, rstp_packet, \
+		rstp_musticast_group_address_octect_1, rstp_musticast_group_address_octect_2, \
+		rstp_musticast_group_address_octect_3, rstp_musticast_group_address_octect_4, rstp_qos_dscp_number, \
+		upnp_name, upnp_type, custom_server, ddns_url, ddns_username, ddns_password, email_username, \
+		email_address, email_password, email_mailserver, email_port_number, email_receipient_1, email_receipient_2, \
+		ftp_server, power_line_frequency, daynight_mode, day_to_night_value_1, day_to_night_value_2, \
+		ir_light_sensor_value, ir_strength_near_value, ir_strength_mid_value, ir_strength_far_value, \
+		smart_ir_mode, daynight_switch_refocus, outdoorindoor_mode, corridor_mode, image_rotation, \
+		keep_aspect_ratio, zoom_limit, ir_balance_mode, white_balance, reduce_motion_blur, \
+		reduce_video_stuttering, defog_mode, anti_fog_intensity, digital_image_stablisation, exposure_mode, \
+		blc_region, wide_dynamic_level, high_light_compensation, day_enhancement_mode, night_enhancement_mode, \
+		video_stream, font_size, font_color, background_color, text_position, date_position, date_format, \
+		deblur_level, anti_flicker_level, high_light_compensation_level, x8021x_eapol_version, x8021x_user, \
+		x8021x_password, x8021x_password_confirm, bonjour_settings, bonjour_enabler, bonjour_name, \
+		rtmp_stream_type, rtmp_server_address, ftp_port, ftp_username, ftp_password, \
+		ftp_storage_settings_storage_path_type, ftp_storage_settings_storage_parent, \
+		ftp_storage_settings_storage_child_directory_type, ftp_storage_settings_storage_alarm_directory_type, \
+		ftp_storage_settings_storage_pre_record_sec, vlan_id, vlan_ip_octect_1, vlan_ip_octect_2, \
+		vlan_ip_octect_3, vlan_ip_octect_4, vlan_subnetmask_octect_1, vlan_subnetmask_octect_2, \
+		vlan_subnetmask_octect_3, vlan_subnetmask_octect_4, vlan_gateway_octect_1, vlan_gateway_octect_2, \
+		vlan_gateway_octect_3, vlan_gateway_octect_4, pppoe_user, pppoe_password, pppoe_password_confirm, \
+		primary_stream_settings_message, secondary_stream_settings_message, tertiary_stream_settings_message, \
+		video_message, image_message, audio_message, network_message, date_time_message, \
+		image_display_settings_message, image_enhancement_settings_message, \
+		image_daynight_mode_enhancement_settings_message, image_osd_settings_message, image_roi_settings_message, \
+		waiting_time, network_menu_tcpip_message, network_menu_http_message, network_menu_rstp_message, \
+		network_menu_upnp_message, network_menu_ddns_message, network_menu_email_message, \
+		network_menu_ftp_message, network_menu_vlan_message, network_menu_pppoe_message, \
+		network_menu_snmp_message, network_menu_xx8021x_message, network_menu_rtmp_message, maintenance_menu_message, \
+		system_information_menu_message, date_time_menu_message, network_menu_x8021x_message, image_menu_message, \
+		network_menu_message, roi_video_stream in reader:
+		response = os.popen(f"ping {ip}").read()
+		if "bytes=32" in response:
+			# Variables - Common
+			video_message_value = "{video_message}"
+			primary_stream_settings_message_value = "{primary_stream_settings_message}"
+			secondary_stream_settings_message_value = "{secondary_stream_settings_message}"
+			tertiary_stream_settings_message_value = "{tertiary_stream_settings_message}"
+			image_menu_message_value = "{image_message}"
+			audio_menu_message_value = "{audio_message}"
+			network_menu_message_value = "{network_message}"
+			network_menu_tcpip_message_value = "{network_menu_tcpip_message}"
+			network_menu_http_message_value = "{network_menu_http_message}"
+			network_menu_rstp_message_value = "{network_menu_rstp_message}"
+			network_menu_upnp_message_value = "{network_menu_upnp_message}"
+			network_menu_ddns_message_value = "{network_menu_ddns_message}"
+			network_menu_email_message_value = "{network_menu_email_message}"
+			network_menu_ftp_message_value = "{network_menu_ftp_message}"
+			network_menu_vlan_message_value = "{network_menu_vlan_message}"
+			network_menu_pppoe_message_value = "{network_menu_pppoe_message}"
+			network_menu_snmp_message_value = "{network_menu_snmp_message}"
+			network_menu_x8021x_message_value = "{network_menu_x8021x_message}"
+			network_menu_rtmp_message_value = "{network_menu_rtmp_message}"
+			date_time_menu_message_value = "{date_time_menu_message}"
+			system_information_menu_message_value = "{system_information_menu_message}"
+			maintenance_menu_message_value = "{maintenance_menu_message}"
+			image_display_settings_message_value = "{image_display_settings_message}"
+			image_enhancement_settings_message_value = "{image_enhancement_settings_message}"
+			image_daynight_mode_enhancement_settings_message_value = "{image_daynight_mode_enhancement_settings_message}"
+			image_osd_settings_message_value = "{image_osd_settings_message}"
+			image_roi_settings_message_value = "{image_roi_settings_message}"
+
+			delay_time_value = "{delay_time}"
+			username_value = "{access_username}"
+			password_value = "{access_password}"
+			# waiting_time_value = "{waiting_time}"
+			waiting_time_value = 5
+			target_message_value = "Accessing Camera {camera_name} Providing Surveillance for {field_of_view}"
+			camera_online_message_value = "Proceeding to work on Camera {camera_name} Providing Surveillance for {field_of_view}"
+			camera_offline_message_value = "Camera {camera_name} Providing Surveillance for {field_of_view} is " \
+										   "currently offline. Configuration works for it have been put on hold"
+			camera = "{web_interface}"
+			# camera = "http://192.168.152.33"
+
+			# Variables - Video
+			camera_video_primary_video_stream_record_stream_type_value = "{record_stream_type}"
+			camera_video_primary_video_stream_VideoCodec_value = "{VideoCodec}"
+			camera_video_primary_video_stream_Resolution_value = "{Resolution}"
+			camera_video_primary_video_stream_FrameRate_value = "{FrameRate}"
+			camera_video_primary_video_stream_BitRate_value = "{BitRate}"
+			camera_video_primary_video_stream_smart_stream_value = "{smart_stream}"
+			camera_video_primary_video_stream_BitRateControl_value = "{BitRateControl}"
+			camera_video_primary_video_stream_profile_value = "{profile}"
+			camera_video_primary_video_stream_IFrame_value = "{IFrame}"
+			camera_video_secondary_video_stream_VideoCodec_value = "{VideoCodec}"
+			camera_video_secondary_video_stream_Resolution_value = "{Resolution}"
+			camera_video_secondary_video_stream_FrameRate_value = "{FrameRate}"
+			camera_video_secondary_video_stream_BitRate_value = "{BitRate}"
+			camera_video_secondary_video_stream_smart_stream_value = "{smart_stream}"
+			camera_video_secondary_video_stream_BitRateControl_value = "{BitRateControl}"
+			camera_video_secondary_video_stream_profile_value = "{profile}"
+			camera_video_secondary_video_stream_IFrame_value = "{IFrame}"
+			camera_video_tertiary_video_stream_VideoCodec_value = "{VideoCodec}"
+			camera_video_tertiary_video_stream_Resolution_value = "{Resolution}"
+			camera_video_tertiary_video_stream_FrameRate_value = "{FrameRate}"
+			camera_video_tertiary_video_stream_BitRate_value = "{BitRate}"
+			camera_video_tertiary_video_stream_smart_stream_value = "{smart_stream}"
+			camera_video_tertiary_video_stream_BitRateControl_value = "{BitRateControl}"
+			camera_video_tertiary_video_stream_profile_value = "{profile}"
+			camera_video_tertiary_video_stream_IFrame_value = "{IFrame}"
+
+			camera_video_record_stream_type_value = "{record_stream_type}"
+			camera_video_VideoCodec_value = "{VideoCodec}"
+			camera_video_Resolution_value = "{Resolution}"
+			camera_video_FrameRate_value = "{FrameRate}"
+			camera_video_BitRate_value = "{BitRate}"
+			camera_video_smart_stream_value = "{smart_stream}"
+			camera_video_BitRateControl_value = "{BitRateControl}"
+			camera_video_profile_value = "{profile}"
+			camera_video_IFrame_value = "{IFrame}"
+
+			deblur_level_value = "{deblur_level}"
+			anti_flicker_level_value = "{anti_flicker_level}"
+			high_light_compensation_level_value = "{high_light_compensation_level}"
+
+			# Variables - Image
+			camera_image_display_power_line_frequency_value = "{power_line_frequency}"
+			camera_image_display_daynight_mode_value = "{daynight_mode}"
+			camera_image_display_day_to_night_value_1_value = "{day_to_night_value_1}"
+			camera_image_display_day_to_night_value_2_value = "{day_to_night_value_2}"
+			camera_image_display_ir_light_sensor_value_value = "{ir_light_sensor_value}"
+			camera_image_display_ir_strength_near_value_value = "{ir_strength_near_value}"
+			camera_image_display_ir_strength_mid_value_value = "{ir_strength_mid_value}"
+			camera_image_display_ir_strength_far_value_value = "{ir_strength_far_value}"
+			camera_image_display_smart_ir_mode_value = "{smart_ir_mode}"
+			camera_image_display_daynight_switch_refocus_value = "{daynight_switch_refocus}"
+			camera_image_display_outdoorindoor_mode_value = "{outdoorindoor_mode}"
+			camera_image_display_corridor_mode_value = "{corridor_mode}"
+			camera_image_display_image_rotation_value = "{image_rotation}"
+			camera_image_display_keep_aspect_ratio_value = "{keep_aspect_ratio}"
+			camera_image_display_zoom_limit_value = "{zoom_limit}"
+
+			camera_image_enhancement_ir_balance_mode_value = "{ir_balance_mode}"
+			camera_image_enhancement_white_balance_value = "{white_balance}"
+			camera_image_enhancement_reduce_motion_blur_value = "{reduce_motion_blur}"
+			camera_image_enhancement_reduce_video_stuttering_value = "{reduce_video_stuttering}"
+			camera_image_enhancement_defog_mode_value = "{defog_mode}"
+			camera_image_enhancement_anti_fog_intensity_value = "{anti_fog_intensity}"
+			camera_image_enhancement_digital_image_stablisation_value = "{digital_image_stablisation}"
+			camera_image_enhancement_exposure_mode_value = "{exposure_mode}"
+			camera_image_enhancement_blc_region_value = "{blc_region}"
+			camera_image_enhancement_wide_dynamic_level_value = "{wide_dynamic_level}"
+			camera_image_enhancement_high_light_compensation_value = "{high_light_compensation}"
+			camera_image_enhancement_day_enhancement_mode_value = "{day_enhancement_mode}"
+			camera_image_enhancement_night_enhancement_mode_value = "{night_enhancement_mode}"
+
+			camera_image_osd_video_stream_value = "{video_stream}"
+			camera_image_osd_font_size_value = "{font_size}"
+			camera_image_osd_font_color_value = "{font_color}"
+			camera_image_osd_background_color_value = "{background_color}"
+			camera_image_osd_text_position_value = "{text_position}"
+			camera_image_osd_date_position_value = "{date_position}"
+			camera_image_osd_date_format_value = "{date_format}"
+			camera_image_osd_surveillance_area_name_value = "{field_of_view}"
+
+			camera_image_roi_video_stream_value = "{roi_video_stream}"
+
+			# Variables - Network
+			tcpip_static_ip_octect_1_value = "{ip_octect_1}"
+			tcpip_static_ip_octect_2_value = "{ip_octect_2}"
+			tcpip_static_ip_octect_3_value = "{ip_octect_3}"
+			tcpip_static_ip_octect_4_value = "{ip_octect_4}"
+			tcpip_subnetmask_octetc_1_value = "{subnet_octect_1}"
+			tcpip_subnetmask_octetc_2_value = "{subnet_octect_2}"
+			tcpip_subnetmask_octetc_3_value = "{subnet_octect_3}"
+			tcpip_subnetmask_octetc_4_value = "{subnet_octect_4}"
+			tcpip_gateway_octect_1_value = "{gateway_octect_1}"
+			tcpip_gateway_octect_2_value = "{gateway_octect_2}"
+			tcpip_gateway_octect_3_value = "{gateway_octect_3}"
+			tcpip_gateway_octect_4_value = "{gateway_octect_4}"
+			tcpip_primary_dns_octect1_value = "{dns_octect_1}"
+			tcpip_primary_dns_octect2_value = "{dns_octect_2}"
+			tcpip_primary_dns_octect3_value = "{dns_octect_3}"
+			tcpip_primary_dns_octect4_value = "{dns_octect_4}"
+			http_port_value = "{http_port_number}"
+			http_https_port_value = "{https_port_number}"
+			rstp_port_value = "{rstp_port_number}"
+			rstp_playback_port_value = "{rstp_playback_port_number}"
+			rstp_rtp_packet_value = "{rstp_packet}"
+			rstp_musticast_group_address_octect_1_value = "{rstp_musticast_group_address_octect_1}"
+			rstp_musticast_group_address_octect_2_value = "{rstp_musticast_group_address_octect_2}"
+			rstp_musticast_group_address_octect_3_value = "{rstp_musticast_group_address_octect_3}"
+			rstp_musticast_group_address_octect_4_value = "{rstp_musticast_group_address_octect_4}"
+			rstp_qos_dscp_value = "{rstp_qos_dscp_number}"
+			upnp_name_value = "{upnp_name}"
+			upnp_type_value = "{upnp_type}"
+			ddns_service_provider_value = "{custom_server}"
+			dns_custom_server_url_value = "{ddns_url}"
+			dns_custom_server_username_value = "{ddns_username}"
+			dns_custom_server_password_value = "{ddns_password}"
+			email_smtp_username_value = "{email_username}"
+			email_smtp_sender_value = "{email_address}"
+			email_smtp_password_value = "{email_password}"
+			email_smtp_server_value = "{email_mailserver}"
+			email_smtp_port_value = "{email_port_number}"
+			email_smtp_email1_value = "{email_receipient_1}"
+			email_smtp_email2_value = "{email_receipient_2}"
+			ftp_server_address_value = "{ftp_server}"
+			ftp_server_port_value = "{ftp_port}"
+			ftp_username_value = "{ftp_username}"
+			ftp_password_value = "{ftp_password}"
+			ftp_storage_settings_storage_path_type_value = "{ftp_storage_settings_storage_path_type}"
+			ftp_storage_settings_storage_parent_value = "{ftp_storage_settings_storage_parent}"
+			ftp_storage_settings_storage_child_directory_type_value = "{ftp_storage_settings_storage_child_directory_type}"
+			ftp_storage_settings_storage_alarm_directory_type_value = "{ftp_storage_settings_storage_alarm_directory_type}"
+			ftp_storage_settings_storage_pre_record_sec_value = "{ftp_storage_settings_storage_pre_record_sec}"
+			vlan_settings_value = "{vlan_settings}"
+			vlan_enable_value = "{vlan_enable}"
+			vlan_id_value = "{vlan_id}"
+			vlan_ip_octect_1_value = "{vlan_ip_octect_1}"
+			vlan_ip_octect_2_value = "{vlan_ip_octect_2}"
+			vlan_ip_octect_3_value = "{vlan_ip_octect_3}"
+			vlan_ip_octect_4_value = "{vlan_ip_octect_4}"
+			vlan_subnetmask_octect_1_value = "{vlan_subnetmask_octect_1}"
+			vlan_subnetmask_octect_2_value = "{vlan_subnetmask_octect_2}"
+			vlan_subnetmask_octect_3_value = "{vlan_subnetmask_octect_3}"
+			vlan_subnetmask_octect_4_value = "{vlan_subnetmask_octect_4}"
+			vlan_gateway_octect_1_value = "{vlan_gateway_octect_1}"
+			vlan_gateway_octect_2_value = "{vlan_gateway_octect_2}"
+			vlan_gateway_octect_3_value = "{vlan_gateway_octect_3}"
+			vlan_gateway_octect_4_value = "{vlan_gateway_octect_4}"
+			pppoe_settings_value = "{pppoe_settings}"
+			pppoe_enable_value = "{pppoe_enable}"
+			pppoe_user_value = "{pppoe_user}"
+			pppoe_password_value = "{pppoe_password}"
+			pppoe_password_confirm_value = "{pppoe_password_confirm}"
+			snmp_settings_value = "{snmp_settings}"
+			snmp_v1_enable_value = "{snmp_v1_enable}"
+			snmp_v2c_enable_value = "{snmp_v2c_enable}"
+			snmp_v2c_write_community_value = "{snmp_v2c_write_community}"
+			snmp_v2c_read_community_value = "{snmp_v2c_read_community}"
+			snmp_v3_enable_value = "{snmp_v3_enable}"
+			snmp_v3_read_security_name_value = "{snmp_v3_read_security_name}"
+			snmp_v3_read_level_of_security_value = "{snmp_v3_read_level_of_security}"
+			snmp_v3_write_security_name_value = "{snmp_v3_write_security_name}"
+			snmp_v3_write_level_of_security_value = "{snmp_v3_write_level_of_security}"
+			snmp_port_value = "{snmp_port}"
+			x8021x_settings_value = "{8021x_settings}"
+			x8021x_enable_value = "{8021x_enable}"
+			x8021x_eapol_version_value = "{8021x_eapol_version}"
+			x8021x_user_value = "{x8021x_user}"
+			x8021x_password_value = "{x8021x_password}"
+			x8021x_password_confirm_value = "{x8021x_password_confirm}"
+			bonjour_settings_value = "{bonjour_settings}"
+			bonjour_enabler_value = "{bonjour_enabler}"
+			bonjour_name_value = "{bonjour_name}"
+			rtmp_settings_value = "{rtmp_settings}"
+			rtmp_enable_value = "{rtmp_enable}"
+			rtmp_stream_type_value = "{rtmp_stream_type}"
+			rtmp_server_address_value = "{rtmp_server_address}"
+
+			# Variables - Date & Time
+			date_time_timezone_value = "{timezone}"
+			date_time_daylight_saving_time_value = "{daylight_saving_time}"
+			date_time_ntp_server_address_value = "{ntp_server_address}"
+			date_time_ntp_server_update_interval_value = "{ntp_server_update_interval}"
+
+			# Variables - System
+			system_device_name_value = "{camera_name}"
+
+			# Variables - Maintenance
+			auto_reboot_day_value = "{auto_reboot_day}"
+			auto_reboot_time_value = "{auto_reboot_time}"
+
+			# CSS Elements - Common
+			configuration_element = "/html/body/div[2]/div[2]/div[3]/div"
+			# configuration_element = "/html/body/div[2]/div[2]/div[3]/div"
+			# configuration_element = "/html/body/div[2]/div[2]/div[3]/div"
+			# configuration_element = "linkConfiguration"
+			basic_settings_element = "/html/body/div[2]/ul[3]/div/li[4]/a"
+			username_element = "username"
+			password_element = "secret"
+			submit_element = "submit"
+			submit_element_2 = "/html/body/div[2]/div[3]/a"
+			video_menu_element = "/html/body/div[2]/ul[3]/div/li[4]/ul/li[1]"
+			settings_frame_element = "mainscreen"
+			image_frame_element = "mainscreen"
+			image_frame_element_2 = "CamContentFrame"
+			secondary_video_stream_frame_1 = "iframecontent"
+			secondary_video_stream_frame = "subField"
+			tertiary_video_stream_frame = "thirdField"
+			primary_video_stream_element = "vsetting.html"
+			secondary_video_stream_enable_element = "hideEnable"
+			secondary_video_stream_element = "vsetting_sub.html"
+			tertiary_video_stream_element = "vsetting_third.html"
+
+			# CSS Elements - Video
+			camera_video_video_menu_element = "/html/body/div[2]/ul[3]/div/li[4]/ul/li[1]"
+			camera_video_settings_frame_element = "mainscreen"
+			camera_video_image_frame_element = "mainscreen"
+			camera_video_image_frame_element_2 = "CamContentFrame"
+			camera_video_secondary_video_stream_frame_1 = "iframecontent"
+			camera_video_secondary_video_stream_frame = "subField"
+			camera_video_tertiary_video_stream_frame = "thirdField"
+			camera_video_primary_video_stream_element = "vsetting.html"
+			camera_video_secondary_video_stream_enable_element = "hideEnable"
+			camera_video_secondary_video_stream_element = "vsetting_sub.html"
+			camera_video_tertiary_video_stream_element = "vsetting_third.html"
+			camera_video_primary_video_stream_record_stream_type_element = "record_stream_type"
+			camera_video_common_video_stream_VideoCodec_element = "VideoCodec"
+			camera_video_common_video_stream_Resolution_element = "Resolution"
+			camera_video_common_video_stream_FrameRate_element = "FrameRate"
+			camera_video_common_video_stream_BitRate_element = "BitRate"
+			camera_video_common_video_stream_smart_stream_element = "smart_stream"
+			camera_video_common_video_stream_BitRateControl_element = "BitRateControl"
+			camera_video_common_video_stream_profile_element = "profile"
+			camera_video_common_video_stream_IFrame_element = "IFrame"
+			camera_video_common_video_stream_check_sub_stream_element = "chkSubStream"
+
+			# CSS Elements - Image
+			camera_image_menu_element = "/html/body/div[2]/ul[3]/div/li[4]/ul/li[2]"
+			# camera_image_menu_element = "MenuImage activeLi"
+			camera_display_element = "camera_display.html"
+			# enhancement_element = "camera_extra.html"
+			enhancement_element = '//*[@id="camera_extra.html"]'
+			daynight_mode_element = "dntemplate.html"
+			osd_element = "camera_osd"
+
+			camera_image_display_power_line_frequency_element = "ficker"
+			# power_line_frequency_element = '//*[@id="ficker"]'
+			camera_image_display_daynight_mode_element_1 = "modeday"
+			camera_image_display_day_to_night_value_1_element_slider = \
+			    "ui-slider-handle ui-state-default ui-corner-all ui-state-active"
+			camera_image_display_day_to_night_value_2_element_slider = \
+			    "ui-slider-pip ui-slider-pip-first ui-slider-pip-label ui-slider-pip-"
+			camera_image_display_day_to_night_value_1_element = \
+			    "/html/body/div[2]/table/tbody/tr[6]/td[2]/div[1]/div/div/span[51]/span[2]"
+			camera_image_display_day_to_night_value_2_element = \
+			    "/html/body/div[2]/table/tbody/tr[7]/td[2]/div[1]/div/div/span[43]/span[2]"
+			camera_image_display_ir_light_sensor_value_element = "iradlevel"
+			camera_image_display_smart_ir_mode_element = "pwmtype"
+			camera_image_display_ir_strength_near_value_element = "tr_cur_smartir_near_value"
+			camera_image_display_ir_strength_mid_value_element = "tr_cur_smartir_mid_value"
+			camera_image_display_ir_strength_far_value_element = "tr_cur_smartir_far_value"
+			camera_image_display_daynight_switch_refocus_element = "dn_refocus"
+			camera_image_display_outdoorindoor_mode_element = "blcprioritytype"
+			camera_image_display_corridor_mode_element = "corridor_mode"
+			camera_image_display_image_rotation_element = "image_rotation"
+			camera_image_display_keep_aspect_ratio_element = "sl_aspect_ratio"
+			camera_image_display_zoom_limit_element = "sl_zoom_limit"
+
+			camera_image_enhancement_ir_balance_mode_element = "smartirtype"
+			camera_image_enhancement_white_balance_element = "whiteblance"
+			camera_image_enhancement_reduce_motion_blur_element = "sel_anti_blurry"
+			camera_image_enhancement_deblur_level_element = "/html/body/div[2]/div[2]/table/tbody/tr[8]/td[2]/div/span[1]"
+			camera_image_enhancement_reduce_video_stuttering_element = "sel_reduce_stuttering"
+			camera_image_enhancement_defog_mode_element = "defog"
+			camera_image_enhancement_anti_fog_intensity_element = \
+			    "/html/body/div[2]/div[2]/table/tbody/tr[12]/td[2]/div/span[27]/span[2]"
+			camera_image_enhancement_digital_image_stablisation_element = "dismode"
+			camera_image_enhancement_exposure_mode_element = "exposuremode"
+			camera_image_enhancement_blc_region_element = "blcregion"
+			camera_image_enhancement_daynight_mode_element = "Dn_mode"
+			camera_image_enhancement_high_light_compensation_level_element = \
+			    "/html/body/div[2]/div[2]/table/tbody/tr[28]/td[2]/div/span[1]"
+			camera_image_enhancement_wide_dynamic_level_element = "wdrlevel"
+			camera_image_enhancement_day_enhancement_mode_element = "hlc_day"
+			camera_image_enhancement_night_enhancement_mode_element = "hlc_night"
+
+			camera_image_osd_camera_osd_element = "camera_osd.html"
+			camera_image_osd_video_stream_element = "recordJpgStream"
+			camera_image_osd_font_size_element = "osdfontsize"
+			camera_image_osd_font_color_element = "mycolor"
+			camera_image_osd_background_color_element = "osdChkBack"
+			camera_image_osd_show_video_title_element = "osdChkText"
+			camera_image_osd_text_position_element = "osdSelTextPosition"
+			camera_image_osd_date_position_element = "osdSelTimePosition"
+			camera_image_osd_date_format_element = "dateformat"
+			camera_image_osd_show_timestamp_element = "osdChkTime"
+			camera_image_osd_copy_to_primary_stream = "pri_stream"
+			camera_image_osd_copy_to_secondary_stream = "sec_stream"
+			camera_image_osd_copy_to_tertiary_stream = "thr_stream"
+			camera_image_osd_video_title_element = "osdText"
+
+			anti_flicker_element = "/html/body/div[2]/div[2]/table/tbody/tr[26]/td[2]/div/div/div/span[1]"
+			day_night_mode_element = "dntemplate.html"
+			daynight_mode_settings_element = "Dn_mode"
+			anti_flicker_level_element = "/html/body/div[2]/div[2]/table/tbody/tr[26]/td[2]/div/div/div/span[1]"
+			high_light_compensation_element = "hlcset"
+			# high_light_compensation_element = '//*[@id="hlcset"]'
+			roi_element = "msroi.html"
+			roi_enable_element = "roiEnable"
+			camera_image_roi_video_stream_element = "RoiStream"
+
+			# CSS Elements - Network
+			# network_menu_element = "MenuNetwork activeLi"
+			network_menu_element = "/html/body/div[2]/ul[3]/div/li[4]/ul/li[4]"
+			network_menu_iframe_element = "mainscreen"
+			network_menu_submit_element = '//*[@id="submit"]'
+			tcpip_tcpip_settings_element = "tcpip.html"
+			tcpip_staticIP_element = "staticIP"
+			tcpip_static_ip_octect_1_element = "ip_1"
+			tcpip_static_ip_octect_2_element = "ip_2"
+			tcpip_static_ip_octect_3_element = "ip_3"
+			tcpip_static_ip_octect_4_element = "ip_4"
+			tcpip_subnetmask_octetc_1_element = "netmask_1"
+			tcpip_subnetmask_octetc_2_element = "netmask_2"
+			tcpip_subnetmask_octetc_3_element = "netmask_3"
+			tcpip_subnetmask_octetc_4_element = "netmask_4"
+			tcpip_gateway_octect_1_element = "gateway_1"
+			tcpip_gateway_octect_2_element = "gateway_2"
+			tcpip_gateway_octect_3_element = "gateway_3"
+			tcpip_gateway_octect_4_element = "gateway_4"
+			tcpip_primary_dns_octect1_element = "dns_1"
+			tcpip_primary_dns_octect2_element = "dns_2"
+			tcpip_primary_dns_octect3_element = "dns_3"
+			tcpip_primary_dns_octect4_element = "dns_4"
+			http_settings_element = "http.html"
+			# http_enable_element = "/html/body/div[2]/table[1]/tbody/tr[1]/td[2]/input"
+			http_enable_element = "chkhttp"
+			http_port_element = "httpport"
+			http_chkhttps_enable_element = "chkhttps"
+			http_https_port_element = "httpsport"
+			rtsp_settings_element = "rtsp.html"
+			rstp_port_element = "mainRtspPort"
+			rstp_playback_port_element = "playback_port"
+			rstp_rtp_packet_element = "rtpsize"
+			rstp_musticast_group_address_octect_1_element = "rtspip_1"
+			rstp_musticast_group_address_octect_2_element = "rtspip_2"
+			rstp_musticast_group_address_octect_3_element = "rtspip_3"
+			rstp_musticast_group_address_octect_4_element = "rtspip_4"
+			rstp_qos_dscp_value_element = "qosdscp"
+			upnp_settings_element = "upnp.html"
+			upnp_enable_element = "scanupnp"
+			upnp_enable_port_mapping_element = "upnpenable"
+			upnp_name_element = "upnpname"
+			upnp_type_element = "upnptype"
+			ddns_settings_element = "ddns.html"
+			ddns_enable_element = "checkdyndns"
+			ddns_service_provider_element = "serverprovider"
+			dns_custom_server_url_element = "custom_server"
+			dns_custom_server_username_element = "username"
+			dns_custom_server_password_element = "password"
+			email_settings_element = "mssmtp.html"
+			email_enable_element = "checkemail"
+			email_smtp_username_element = "smtpusername"
+			email_smtp_sender_element = "smtpsender"
+			email_smtp_password_element = "smtppassword"
+			email_smtp_server_element = "smtpserver"
+			email_smtp_port_element = "smtpport"
+			email_smtp_email1_element = "smtpemail1"
+			email_smtp_email2_element = "smtpemail2"
+			email_smtp_encry_ssl_element = "smtp_encry_ssl"
+			email_smtp_encry_tls_element = "smtp_encry_tls"
+			ftp_settings_element = "msftp.html"
+			ftp_server_address_element = "ftpserver"
+			ftp_server_port_element = "ftpport"
+			ftp_username_element = "ftpusername"
+			ftp_password_element = "ftppassword"
+			ftp_over_ssl_tls_ftps_element = "ftpprotocol"
+			ftp_storage_settings_storage_path_type_element = "pathType"
+			ftp_storage_settings_storage_parent_element = "parentDirType"
+			ftp_storage_settings_storage_child_directory_type_element = "childDirType"
+			ftp_storage_settings_storage_alarm_directory_type_element = "alarmDirType"
+			ftp_storage_settings_storage_pre_record_sec_element = "pre_record_sec"
+			vlan_settings_element = "msvlan.html"
+			vlan_enable_element = "vlanenable"
+			vlan_id_element = "vlanid"
+			vlan_ip_octect_1_element = "vlanip_1"
+			vlan_ip_octect_2_element = "vlanip_2"
+			vlan_ip_octect_3_element = "vlanip_3"
+			vlan_ip_octect_4_element = "vlanip_4"
+			vlan_subnetmask_octect_1_element = "vlannetmask_1"
+			vlan_subnetmask_octect_2_element = "vlannetmask_2"
+			vlan_subnetmask_octect_3_element = "vlannetmask_3"
+			vlan_subnetmask_octect_4_element = "vlannetmask_4"
+			vlan_gateway_octect_1_element = "vlangateway_1"
+			vlan_gateway_octect_2_element = "vlangateway_2"
+			vlan_gateway_octect_3_element = "vlangateway_3"
+			vlan_gateway_octect_4_element = "vlangateway_4"
+			pppoe_settings_element = "mspppoe.html"
+			pppoe_enable_element = "enablepppoe"
+			pppoe_user_element = "pppoeuser"
+			pppoe_password_element = "pppoepassword"
+			pppoe_password_confirm_element = "pppoeconfirm"
+			snmp_settings_element = "mssnmp.html"
+			snmp_v1_enable_element = "enableSnmpV1"
+			snmp_v2c_enable_element = "enableSnmpV2c"
+			snmp_v2c_write_community_element = "wrcommunity"
+			snmp_v2c_read_community_element = "rdcommunity"
+			snmp_v3_enable_element = "enableSnmpV3"
+			snmp_v3_read_security_name_element = "rdsecurityname"
+			snmp_v3_read_level_of_security_element = "levelofsecurity"
+			snmp_v3_write_security_name_element = "writesecurityname"
+			snmp_v3_write_level_of_security_element = "securitylevel"
+			snmp_port_element = "SNMPport"
+			snmp_v3_read_authentication_algorithm_sha_element = "authenticationalgorithmsha"
+			snmp_v3_read_private_key_algorithm_aes_element = "privatekeyalgorithmaes"
+			snmp_v3_write_authentication_algorithm_sha_element = "wrauthenticationalgorithmsha"
+			snmp_v3_write_private_key_algorithm_aes_element = "wrprivatekeyalgorithmaes"
+			# x8021x_settings_element = "msx8021x.html"
+			x8021x_settings_element = "/html/body/div[2]/div[4]/div[2]/ul/li[11]/a"
+			# x8021x_enable_element = "enablex8021x"
+			x8021x_enable_element = "/html/body/div/table/tbody/tr[1]/td[2]/input"
+			x8021x_eapol_version_element = "eapol_version"
+			x8021x_user_element = "user"
+			x8021x_password_element = "password"
+			x8021x_password_confirm_element = "confirm"
+			bonjour_settings_element = "msbonjour.html"
+			# bonjour_enabler_element = "enablebonjour"
+			bonjour_enabler_element = "/html/body/div/table/tbody/tr[1]/td[2]/input"
+			#bonjour_name_element = "bonjourname"
+			bonjour_name_element = "/html/body/div/table/tbody/tr[2]/td[2]/input"
+			rtmp_settings_element = "rtmp.html"
+			rtmp_enable_element = "rtmp_check"
+			rtmp_stream_type_element = "sel_stream"
+			rtmp_server_address_element = "addr_input"
+
+			# CSS Elements - Date & Time
+			date_time_menu_iframe_element = "mainscreen"
+			# date_time_menu_element = "MenuDatetime activeLi"
+			date_time_menu_element = "/html/body/div[2]/ul[3]/div/li[4]/ul/li[6]"
+			# date_time_submit_element = '//*[@id="submit"]'
+			date_time_submit_element = "submit"
+			date_time_settings_element = "datetime.html"
+			date_time_timezone_element = "timezone"
+			# date_time_timezone_element = "/html/body/div[1]/table[2]/tbody/tr[2]/td[2]/select"
+			date_time_daylight_saving_time_element = "daylight"
+			date_time_ntp_server_enable_element = "sntp"
+			date_time_ntp_server_address_element = "sntpserver"
+			date_time_ntp_server_sync_enable_element = "ntp_sync_enable"
+			date_time_ntp_server_update_interval_element = "ntp_interval"
+			date_time_manual_element = "manual"
+			date_time_synchronize_with_computer_element = "computer"
+
+			# CSS Elements - System
+			system_menu_iframe_element = "mainscreen"
+			
+			 = "priMenu system hoverImg IsSel"
+			system_info_settings_element = "syslog.html"
+			system_device_name_element = "deviceName"
+			system_submit_element = '//*[@id="submit"]'
+
+			# CSS Elements - Maintenance
+			maintenance_menu_iframe_element = "mainscreen"
+			maintenance_menu_submit_element = "/html/body/div[1]/a"
+			maintenance_menu_element = "priMenu mainten hoverImg date_time_IsSel"
+			auto_reboot_enable_element = "msreboot.html"
+			auto_reboot_day_element = "day_interval"
+			auto_reboot_time_element = "reboottime"
+
+			# File Locations - Common
+			path = "C:/Users/buruka/Desktop/Scripts/Testing & Development/Selenium/Drivers/chrome_88/chromedriver.exe"
+
+			# Program Execution - Common
+			driver = webdriver.Chrome(path)
+			Wait = WebDriverWait(driver, waiting_time_value)
+			move = ActionChains(driver)
+			# un = driver.find_element_by_id(username_element)
+			# pwd = driver.find_element_by_id(password_element)
+			print(camera_online_message_value.format(camera_name=(''.join(str(elt) for elt in camera_name)), field_of_view=(''.join(str(elt) for elt in field_of_view))))
+			print(target_message_value.format(camera_name=(''.join(str(elt) for elt in camera_name)), field_of_view=(''.join(str(elt) for elt in field_of_view))))
+			driver.get(camera.format(web_interface=(''.join(str(elt) for elt in web_interface))))
+			print(driver.title)
+			# time.sleep(5)
+			un = driver.find_element_by_id(username_element)
+			un.send_keys(username_value.format(access_username=(''.join(str(elt) for elt in access_username))))
+			pwd = driver.find_element_by_id(password_element)
+			pwd.send_keys(password_value.format(access_password=(''.join(str(elt) for elt in access_password))))
+			pwd.send_keys(Keys.RETURN)
+			
+			# Program Execution - Video
+			print(primary_stream_settings_message_value.format(primary_stream_settings_message=(''.join(str(elt) for elt in primary_stream_settings_message))))
+			time.sleep(5)
+			Wait.until(ec.element_to_be_clickable((By.XPATH, configuration_element))).click()
+			# Wait.until(ec.element_to_be_clickable((By.XPATH, configuration_element))).click()
+			# Wait.until(ec.element_to_be_clickable((By.ID, configuration_element))).click()
+			Wait.until(ec.element_to_be_clickable((By.XPATH, basic_settings_element))).click()
+			Wait.until(ec.element_to_be_clickable((By.ID, camera_video_primary_video_stream_element))).click()
+			Wait.until(ec.element_to_be_clickable((By.ID, settings_frame_element))).click()	
+			Wait.until(ec.frame_to_be_available_and_switch_to_it((By.ID, settings_frame_element)))
+			Select(driver.find_element_by_id(camera_video_primary_video_stream_record_stream_type_element)).select_by_value(camera_video_primary_video_stream_record_stream_type_value.format(record_stream_type=(''.join(str(elt) for elt in record_stream_type))))
+			Select(driver.find_element_by_id(camera_video_common_video_stream_VideoCodec_element)).select_by_value(camera_video_primary_video_stream_VideoCodec_value.format(VideoCodec=(''.join(str(elt) for elt in VideoCodec))))
+			Select(driver.find_element_by_id(camera_video_common_video_stream_Resolution_element)).select_by_value(camera_video_primary_video_stream_Resolution_value.format(Resolution=(''.join(str(elt) for elt in Resolution))))
+			Select(driver.find_element_by_id(camera_video_common_video_stream_FrameRate_element)).select_by_value(camera_video_primary_video_stream_FrameRate_value.format(FrameRate=(''.join(str(elt) for elt in FrameRate))))
+			Select(driver.find_element_by_id(camera_video_common_video_stream_BitRate_element)).select_by_value(camera_video_primary_video_stream_BitRate_value.format(BitRate=(''.join(str(elt) for elt in BitRate))))
+			Select(driver.find_element_by_id(camera_video_common_video_stream_smart_stream_element)).select_by_value(camera_video_primary_video_stream_smart_stream_value.format(smart_stream=(''.join(str(elt) for elt in smart_stream))))
+			Select(driver.find_element_by_id(camera_video_common_video_stream_BitRate_element)).select_by_value(camera_video_primary_video_stream_BitRateControl_value.format(BitRateControl=(''.join(str(elt) for elt in BitRateControl))))
+			Select(driver.find_element_by_id(camera_video_common_video_stream_profile_element)).select_by_value(camera_video_primary_video_stream_profile_value.format(profile=(''.join(str(elt) for elt in profile))))
+			driver.find_element_by_id(camera_video_common_video_stream_IFrame_element).clear()
+			driver.find_element_by_id(camera_video_common_video_stream_IFrame_element).send_keys(camera_video_primary_video_stream_IFrame_value.format(IFrame=(''.join(str(elt) for elt in IFrame))))
+			driver.find_element_by_id(submit_element)
+			driver.switch_to.default_content()
+			time.sleep(5)
+			
+			print(secondary_stream_settings_message_value.format(secondary_stream_settings_message=(''.join(str(elt) for elt in secondary_stream_settings_message))))
+			Wait.until(ec.element_to_be_clickable((By.XPATH, basic_settings_element))).click()
+			Wait.until(ec.element_to_be_clickable((By.ID, camera_video_secondary_video_stream_element))).click()
+			Wait.until(ec.frame_to_be_available_and_switch_to_it((By.ID, settings_frame_element)))
+			# Wait.until(ec.element_to_be_clickable((By.ID, camera_video_common_video_stream_check_sub_stream_element))).click()
+			# Wait.until(ec.element_to_be_clickable((By.ID, camera_video_common_video_stream_check_sub_stream_element))).click()
+			time.sleep(5)
+			Select(driver.find_element_by_id(camera_video_common_video_stream_VideoCodec_element)).select_by_value(camera_video_secondary_video_stream_VideoCodec_value.format(VideoCodec=(''.join(str(elt) for elt in VideoCodec))))
+			Select(driver.find_element_by_id(camera_video_common_video_stream_Resolution_element)).select_by_value(camera_video_secondary_video_stream_Resolution_value.format(Resolution=(''.join(str(elt) for elt in Resolution))))
+			Select(driver.find_element_by_id(camera_video_common_video_stream_FrameRate_element)).select_by_value(camera_video_secondary_video_stream_FrameRate_value.format(FrameRate=(''.join(str(elt) for elt in FrameRate))))
+			Select(driver.find_element_by_id(camera_video_common_video_stream_BitRate_element)).select_by_value(camera_video_secondary_video_stream_BitRate_value.format(BitRate=(''.join(str(elt) for elt in BitRate))))
+			Select(driver.find_element_by_id(camera_video_common_video_stream_smart_stream_element)).select_by_value(camera_video_secondary_video_stream_smart_stream_value.format(smart_stream=(''.join(str(elt) for elt in smart_stream))))
+			Select(driver.find_element_by_id(camera_video_common_video_stream_BitRate_element)).select_by_value(camera_video_secondary_video_stream_BitRateControl_value.format(BitRateControl=(''.join(str(elt) for elt in BitRateControl))))
+			Select(driver.find_element_by_id(camera_video_common_video_stream_profile_element)).select_by_value(camera_video_secondary_video_stream_profile_value.format(profile=(''.join(str(elt) for elt in profile))))
+			driver.find_element_by_id(camera_video_common_video_stream_IFrame_element).clear()
+			driver.find_element_by_id(camera_video_common_video_stream_IFrame_element).send_keys(camera_video_secondary_video_stream_IFrame_value.format(IFrame=(''.join(str(elt) for elt in IFrame))))
+			driver.find_element_by_id(submit_element)
+			driver.switch_to.default_content()
+			time.sleep(5)
+
+			print(tertiary_stream_settings_message_value.format(tertiary_stream_settings_message=(''.join(str(elt) for elt in tertiary_stream_settings_message))))
+			Wait.until(ec.element_to_be_clickable((By.XPATH, basic_settings_element))).click()
+			Wait.until(ec.element_to_be_clickable((By.ID, camera_video_tertiary_video_stream_element))).click()
+			Wait.until(ec.frame_to_be_available_and_switch_to_it((By.ID, settings_frame_element)))
+			# Wait.until(ec.element_to_be_clickable((By.ID, camera_video_common_video_stream_check_sub_stream_element))).click()
+			driver.find_element_by_id(camera_video_common_video_stream_check_sub_stream_element).is_selected()
+			time.sleep(5)
+			Select(driver.find_element_by_id(camera_video_common_video_stream_VideoCodec_element)).select_by_value(camera_video_tertiary_video_stream_VideoCodec_value.format(VideoCodec=(''.join(str(elt) for elt in VideoCodec))))
+			Select(driver.find_element_by_id(camera_video_common_video_stream_Resolution_element)).select_by_value(camera_video_tertiary_video_stream_Resolution_value.format(Resolution=(''.join(str(elt) for elt in Resolution))))
+			Select(driver.find_element_by_id(camera_video_common_video_stream_FrameRate_element)).select_by_value(camera_video_tertiary_video_stream_FrameRate_value.format(FrameRate=(''.join(str(elt) for elt in FrameRate))))
+			Select(driver.find_element_by_id(camera_video_common_video_stream_BitRate_element)).select_by_value(camera_video_tertiary_video_stream_BitRate_value.format(BitRate=(''.join(str(elt) for elt in BitRate))))
+			Select(driver.find_element_by_id(camera_video_common_video_stream_smart_stream_element)).select_by_value(camera_video_tertiary_video_stream_smart_stream_value.format(smart_stream=(''.join(str(elt) for elt in smart_stream))))
+			Select(driver.find_element_by_id(camera_video_common_video_stream_BitRate_element)).select_by_value(camera_video_tertiary_video_stream_BitRateControl_value.format(BitRateControl=(''.join(str(elt) for elt in BitRateControl))))
+			Select(driver.find_element_by_id(camera_video_common_video_stream_profile_element)).select_by_value(camera_video_tertiary_video_stream_profile_value.format(profile=(''.join(str(elt) for elt in profile))))
+			driver.find_element_by_id(camera_video_common_video_stream_IFrame_element).clear()
+			driver.find_element_by_id(camera_video_common_video_stream_IFrame_element).send_keys(camera_video_tertiary_video_stream_IFrame_value.format(IFrame=(''.join(str(elt) for elt in IFrame))))
+			driver.find_element_by_id(submit_element)
+			driver.switch_to.default_content()
+			driver.switch_to.default_content()
+			
+			# Program Execution - Image
+			print(image_menu_message_value.format(image_message=(''.join(str(elt) for elt in image_message))))
+			# Wait.until(ec.element_to_be_clickable((By.XPATH, configuration_element))).click()
+			# Wait.until(ec.element_to_be_clickable((By.XPATH, basic_settings_element))).click()
+			print(image_display_settings_message_value.format(image_display_settings_message=(''.join(str(elt) for elt in image_display_settings_message))))
+			Wait.until(ec.element_to_be_clickable((By.XPATH, camera_image_menu_element))).click()
+			Wait.until(ec.element_to_be_clickable((By.ID, camera_display_element))).click()
+			Wait.until(ec.element_to_be_clickable((By.ID, image_frame_element))).click()	
+			Wait.until(ec.frame_to_be_available_and_switch_to_it((By.ID, image_frame_element)))
+			Wait.until(ec.frame_to_be_available_and_switch_to_it((By.ID, image_frame_element_2)))
+			Select(driver.find_element_by_id(camera_image_display_power_line_frequency_element)).select_by_value(camera_image_display_power_line_frequency_value.format(power_line_frequency=(''.join(str(elt) for elt in power_line_frequency))))
+			Select(driver.find_element_by_id(camera_image_display_daynight_mode_element_1)).select_by_value(camera_image_display_daynight_mode_value.format(daynight_mode=(''.join(str(elt) for elt in daynight_mode))))
+			Select(driver.find_element_by_id(camera_image_display_daynight_switch_refocus_element)).select_by_value(camera_image_display_daynight_switch_refocus_value.format(daynight_switch_refocus=(''.join(str(elt) for elt in daynight_switch_refocus))))
+			Select(driver.find_element_by_id(camera_image_display_outdoorindoor_mode_element)).select_by_value(camera_image_display_outdoorindoor_mode_value.format(outdoorindoor_mode=(''.join(str(elt) for elt in outdoorindoor_mode))))
+			Select(driver.find_element_by_id(camera_image_display_corridor_mode_element)).select_by_value(camera_image_display_corridor_mode_value.format(corridor_mode=(''.join(str(elt) for elt in corridor_mode))))
+			Select(driver.find_element_by_id(camera_image_display_image_rotation_element)).select_by_value(camera_image_display_image_rotation_value.format(image_rotation=(''.join(str(elt) for elt in image_rotation))))
+			Select(driver.find_element_by_id(camera_image_display_keep_aspect_ratio_element)).select_by_value(camera_image_display_keep_aspect_ratio_value.format(keep_aspect_ratio=(''.join(str(elt) for elt in keep_aspect_ratio))))
+			Select(driver.find_element_by_id(camera_image_display_zoom_limit_element)).select_by_value(camera_image_display_zoom_limit_value.format(zoom_limit=(''.join(str(elt) for elt in zoom_limit))))
+			driver.find_element_by_id(submit_element)
+			driver.switch_to.default_content()
+			driver.switch_to.default_content()
+			
+			print(image_enhancement_settings_message_value.format(image_enhancement_settings_message=(''.join(str(elt) for elt in image_enhancement_settings_message))))
+			Wait.until(ec.element_to_be_clickable((By.XPATH, enhancement_element))).click()
+			Wait.until(ec.element_to_be_clickable((By.ID, image_frame_element))).click()	
+			Wait.until(ec.frame_to_be_available_and_switch_to_it((By.ID, image_frame_element)))
+			Wait.until(ec.frame_to_be_available_and_switch_to_it((By.ID, image_frame_element_2)))
+			Select(driver.find_element_by_id(camera_image_enhancement_ir_balance_mode_element)).select_by_value(camera_image_enhancement_ir_balance_mode_value.format(ir_balance_mode=(''.join(str(elt) for elt in ir_balance_mode))))
+			Select(driver.find_element_by_id(camera_image_enhancement_white_balance_element)).select_by_value(camera_image_enhancement_white_balance_value.format(white_balance=(''.join(str(elt) for elt in white_balance))))
+			Select(driver.find_element_by_id(camera_image_enhancement_reduce_motion_blur_element)).select_by_value(camera_image_enhancement_reduce_motion_blur_value.format(reduce_motion_blur=(''.join(str(elt) for elt in reduce_motion_blur))))
+			Select(driver.find_element_by_id(camera_image_enhancement_reduce_video_stuttering_element)).select_by_value(camera_image_enhancement_reduce_video_stuttering_value.format(reduce_video_stuttering=(''.join(str(elt) for elt in reduce_video_stuttering))))
+			Select(driver.find_element_by_id(camera_image_enhancement_defog_mode_element)).select_by_value(camera_image_enhancement_defog_mode_value.format(defog_mode=(''.join(str(elt) for elt in defog_mode))))
+			Select(driver.find_element_by_id(camera_image_enhancement_digital_image_stablisation_element)).select_by_value(camera_image_enhancement_digital_image_stablisation_value.format(digital_image_stablisation=(''.join(str(elt) for elt in digital_image_stablisation))))
+			Select(driver.find_element_by_id(camera_image_enhancement_exposure_mode_element)).select_by_value(camera_image_enhancement_exposure_mode_value.format(exposure_mode=(''.join(str(elt) for elt in exposure_mode))))
+			Wait.until(ec.element_to_be_clickable((By.ID, camera_image_enhancement_daynight_mode_element))).click()
+			Select(driver.find_element_by_id(camera_image_enhancement_blc_region_element)).select_by_value(camera_image_enhancement_blc_region_value.format(blc_region=(''.join(str(elt) for elt in blc_region))))
+			Select(driver.find_element_by_id(camera_image_enhancement_wide_dynamic_level_element)).select_by_value(camera_image_enhancement_wide_dynamic_level_value.format(wide_dynamic_level=(''.join(str(elt) for elt in wide_dynamic_level))))
+			Select(driver.find_element_by_id(camera_image_enhancement_day_enhancement_mode_element)).select_by_value(camera_image_enhancement_day_enhancement_mode_value.format(day_enhancement_mode=(''.join(str(elt) for elt in day_enhancement_mode))))
+			Select(driver.find_element_by_id(camera_image_enhancement_night_enhancement_mode_element)).select_by_value(camera_image_enhancement_night_enhancement_mode_value.format(night_enhancement_mode=(''.join(str(elt) for elt in night_enhancement_mode))))
+			driver.find_element_by_xpath(submit_element_2)
+			driver.switch_to.default_content()
+			driver.switch_to.default_content()
+			
+			print(image_daynight_mode_enhancement_settings_message_value.format(image_daynight_mode_enhancement_settings_message=(''.join(str(elt) for elt in image_daynight_mode_enhancement_settings_message))))
+			Wait.until(ec.element_to_be_clickable((By.ID, day_night_mode_element))).click()
+			Wait.until(ec.element_to_be_clickable((By.ID, image_frame_element))).click()	
+			Wait.until(ec.frame_to_be_available_and_switch_to_it((By.ID, image_frame_element)))
+			Wait.until(ec.frame_to_be_available_and_switch_to_it((By.ID, image_frame_element_2)))
+			driver.find_element_by_id(submit_element)
+			driver.switch_to.default_content()
+			driver.switch_to.default_content()
+			
+			print(image_osd_settings_message_value.format(image_osd_settings_message=(''.join(str(elt) for elt in image_osd_settings_message))))
+			Wait.until(ec.element_to_be_clickable((By.ID, camera_image_osd_camera_osd_element))).click()
+			Wait.until(ec.element_to_be_clickable((By.ID, image_frame_element))).click()	
+			Wait.until(ec.frame_to_be_available_and_switch_to_it((By.ID, image_frame_element)))
+			Wait.until(ec.frame_to_be_available_and_switch_to_it((By.ID, image_frame_element_2)))
+			Select(driver.find_element_by_id(camera_image_osd_video_stream_element)).select_by_value(camera_image_osd_video_stream_value.format(video_stream=(''.join(str(elt) for elt in video_stream))))
+			Select(driver.find_element_by_id(camera_image_osd_font_size_element)).select_by_value(camera_image_osd_font_size_value.format(font_size=(''.join(str(elt) for elt in font_size))))
+			driver.find_element_by_id(camera_image_osd_show_video_title_element).is_selected()
+			# Wait.until(ec.element_to_be_clickable((By.ID, camera_image_osd_show_video_title_element))).click()
+			driver.find_element_by_id(camera_image_osd_video_title_element).is_selected()
+			driver.find_element_by_id(camera_image_osd_video_title_element).send_keys(camera_image_osd_surveillance_area_name_value.format(field_of_view=(''.join(str(elt) for elt in field_of_view))))
+			Select(driver.find_element_by_id(camera_image_osd_text_position_element)).select_by_value(camera_image_osd_text_position_value.format(text_position=(''.join(str(elt) for elt in text_position))))
+			driver.find_element_by_id(camera_image_osd_show_timestamp_element).is_selected()
+			Select(driver.find_element_by_id(camera_image_osd_date_position_element)).select_by_value(camera_image_osd_date_position_value.format(date_position=(''.join(str(elt) for elt in date_position))))
+			Select(driver.find_element_by_id(camera_image_osd_date_format_element)).select_by_value(camera_image_osd_date_format_value.format(date_format=(''.join(str(elt) for elt in date_format))))
+			driver.find_element_by_id(camera_image_osd_copy_to_secondary_stream).is_selected()
+			driver.find_element_by_id(camera_image_osd_copy_to_secondary_stream).click()
+			driver.find_element_by_id(camera_image_osd_copy_to_tertiary_stream).is_selected()
+			driver.find_element_by_id(camera_image_osd_copy_to_tertiary_stream).click()
+			driver.find_element_by_id(submit_element)
+			driver.switch_to.default_content()
+			driver.switch_to.default_content()
+			
+			print(image_roi_settings_message_value.format(image_roi_settings_message=(''.join(str(elt) for elt in image_roi_settings_message))))
+			Wait.until(ec.element_to_be_clickable((By.ID, roi_element))).click()
+			Wait.until(ec.element_to_be_clickable((By.ID, image_frame_element))).click()	
+			Wait.until(ec.frame_to_be_available_and_switch_to_it((By.ID, image_frame_element)))
+			Wait.until(ec.frame_to_be_available_and_switch_to_it((By.ID, image_frame_element_2)))
+			driver.find_element_by_id(roi_enable_element).is_selected()
+			# Wait.until(ec.element_to_be_clickable((By.ID, roi_enable_element))).click()
+			Select(driver.find_element_by_id(camera_image_roi_video_stream_element)).select_by_value(camera_image_roi_video_stream_value.format(roi_video_stream=(''.join(str(elt) for elt in roi_video_stream))))
+			driver.find_element_by_id(submit_element)
+			driver.switch_to.default_content()
+			driver.switch_to.default_content()
+			
+			# Program Execution - Network
+			# Wait.until(ec.element_to_be_clickable((By.ID, network_menu_element))).click()
+			Wait.until(ec.element_to_be_clickable((By.XPATH, network_menu_element))).click()
+			print(network_menu_message_value.format(network_message=(''.join(str(elt) for elt in network_message))))
+			Wait.until(ec.element_to_be_clickable((By.ID, network_menu_iframe_element))).click()
+			Wait.until(ec.frame_to_be_available_and_switch_to_it((By.ID, network_menu_iframe_element)))
+			# Wait.until(ec.element_to_be_clickable((By.ID, tcpip_tcpip_settings_element))).click()
+			print(network_menu_tcpip_message_value.format(network_menu_tcpip_message=(''.join(str(elt) for elt in network_menu_tcpip_message))))
+			driver.find_element_by_id(tcpip_staticIP_element).is_selected()
+			# driver.find_element_by_id(tcpip_static_ip_octect_1_element).send_keys(tcpip_static_ip_octect_1_value.format(ip_octect_1=(''.join(str(elt) for elt in ip_octect_1))))
+			# driver.find_element_by_id(tcpip_static_ip_octect_2_element).send_keys(tcpip_static_ip_octect_2_value.format(ip_octect_2=(''.join(str(elt) for elt in ip_octect_2))))
+			# driver.find_element_by_id(tcpip_static_ip_octect_3_element).send_keys(tcpip_static_ip_octect_3_value.format(ip_octect_3=(''.join(str(elt) for elt in ip_octect_3))))
+			# driver.find_element_by_id(tcpip_static_ip_octect_4_element).send_keys(tcpip_static_ip_octect_4_value.format(ip_octect_4=(''.join(str(elt) for elt in ip_octect_4))))
+			# driver.find_element_by_id(tcpip_subnetmask_octetc_1_element).send_keys(tcpip_subnetmask_octetc_1_value.format(subnet_octect_1=(''.join(str(elt) for elt in subnet_octect_1))))
+			# driver.find_element_by_id(tcpip_subnetmask_octetc_2_element).send_keys(tcpip_subnetmask_octetc_2_value.format(subnet_octect_2=(''.join(str(elt) for elt in subnet_octect_2))))
+			# driver.find_element_by_id(tcpip_subnetmask_octetc_3_element).send_keys(tcpip_subnetmask_octetc_3_value.format(subnet_octect_3=(''.join(str(elt) for elt in subnet_octect_3))))
+			# driver.find_element_by_id(tcpip_subnetmask_octetc_4_element).send_keys(tcpip_subnetmask_octetc_4_value.format(subnet_octect_4=(''.join(str(elt) for elt in subnet_octect_4))))
+			# driver.find_element_by_id(tcpip_gateway_octect_1_element).send_keys(tcpip_gateway_octect_1_value.format(gateway_octect_1=(''.join(str(elt) for elt in gateway_octect_1))))
+			# driver.find_element_by_id(tcpip_gateway_octect_2_element).send_keys(tcpip_gateway_octect_2_value.format(gateway_octect_2=(''.join(str(elt) for elt in gateway_octect_2))))
+			# driver.find_element_by_id(tcpip_gateway_octect_3_element).send_keys(tcpip_gateway_octect_3_value.format(gateway_octect_3=(''.join(str(elt) for elt in gateway_octect_3))))
+			# driver.find_element_by_id(tcpip_gateway_octect_4_element).send_keys(tcpip_gateway_octect_4_value.format(gateway_octect_4=(''.join(str(elt) for elt in gateway_octect_4))))
+			driver.find_element_by_id(tcpip_primary_dns_octect1_element).send_keys(tcpip_primary_dns_octect1_value.format(dns_octect_1=(''.join(str(elt) for elt in dns_octect_1))))
+			driver.find_element_by_id(tcpip_primary_dns_octect2_element).send_keys(tcpip_primary_dns_octect2_value.format(dns_octect_2=(''.join(str(elt) for elt in dns_octect_2))))
+			driver.find_element_by_id(tcpip_primary_dns_octect3_element).send_keys(tcpip_primary_dns_octect3_value.format(dns_octect_3=(''.join(str(elt) for elt in dns_octect_3))))
+			driver.find_element_by_id(tcpip_primary_dns_octect4_element).send_keys(tcpip_primary_dns_octect4_value.format(dns_octect_4=(''.join(str(elt) for elt in dns_octect_4))))
+			driver.find_element_by_xpath(network_menu_submit_element).click()
+			driver.switch_to.default_content()
+			print("sucessfully saved")
+			
+			# Wait.until(ec.element_to_be_clickable((By.ID, http_settings_element))).click()
+			# Wait.until(ec.element_to_be_clickable((By.ID, network_menu_iframe_element))).click()
+			# Wait.until(ec.frame_to_be_available_and_switch_to_it((By.ID, network_menu_iframe_element)))
+			# print(network_menu_http_message_value.format(network_menu_http_message=(''.join(str(elt) for elt in network_menu_http_message))))
+			# driver.find_element_by_id(http_enable_element).is_selected()
+			# driver.find_element_by_id(http_enable_element).click()
+			# driver.find_element_by_id(http_port_element).send_keys(http_port_value.format(http_port_number=(''.join(str(elt) for elt in http_port_number))))
+			# driver.find_element_by_id(http_chkhttps_enable_element).is_selected()
+			# driver.find_element_by_id(http_https_port_element).send_keys(http_https_port_value.format(https_port_number=(''.join(str(elt) for elt in https_port_number))))
+			# driver.find_element_by_xpath(network_menu_submit_element).click()
+			# driver.switch_to.default_content()
+			print("sucessfully saved")
+			
+			Wait.until(ec.element_to_be_clickable((By.ID, rtsp_settings_element))).click()
+			Wait.until(ec.element_to_be_clickable((By.ID, network_menu_iframe_element))).click()
+			Wait.until(ec.frame_to_be_available_and_switch_to_it((By.ID, network_menu_iframe_element)))
+			print(network_menu_rstp_message_value.format(network_menu_rstp_message=(''.join(str(elt) for elt in network_menu_rstp_message))))
+			driver.find_element_by_id(rstp_port_element).send_keys(rstp_port_value.format(rstp_port_number=(''.join(str(elt) for elt in rstp_port_number))))
+			driver.find_element_by_id(rstp_playback_port_element).send_keys(rstp_playback_port_value.format(rstp_playback_port_number=(''.join(str(elt) for elt in rstp_playback_port_number))))
+			driver.find_element_by_id(rstp_rtp_packet_element)
+			driver.find_element_by_id(rstp_musticast_group_address_octect_1_element).send_keys(rstp_musticast_group_address_octect_1_value.format(rstp_musticast_group_address_octect_1=(''.join(str(elt) for elt in rstp_musticast_group_address_octect_1))))
+			driver.find_element_by_id(rstp_musticast_group_address_octect_1_element).send_keys(rstp_musticast_group_address_octect_2_value.format(rstp_musticast_group_address_octect_2=(''.join(str(elt) for elt in rstp_musticast_group_address_octect_2))))
+			driver.find_element_by_id(rstp_musticast_group_address_octect_3_element).send_keys(rstp_musticast_group_address_octect_3_value.format(rstp_musticast_group_address_octect_3=(''.join(str(elt) for elt in rstp_musticast_group_address_octect_3))))
+			driver.find_element_by_id(rstp_musticast_group_address_octect_4_element).send_keys(rstp_musticast_group_address_octect_4_value.format(rstp_musticast_group_address_octect_4=(''.join(str(elt) for elt in rstp_musticast_group_address_octect_4))))
+			driver.find_element_by_id(rstp_qos_dscp_value_element).send_keys(rstp_qos_dscp_value.format(rstp_qos_dscp_number=(''.join(str(elt) for elt in rstp_qos_dscp_number))))
+			driver.find_element_by_xpath(network_menu_submit_element).click()
+			driver.switch_to.default_content()
+			print("sucessfully saved")
+			
+			# Wait.until(ec.element_to_be_clickable((By.ID, upnp_settings_element))).click()
+			# Wait.until(ec.element_to_be_clickable((By.ID, network_menu_iframe_element))).click()
+			# Wait.until(ec.frame_to_be_available_and_switch_to_it((By.ID, network_menu_iframe_element)))
+			# print(network_menu_upnp_message_value.format(network_menu_upnp_message=(''.join(str(elt) for elt in network_menu_upnp_message))))
+			# driver.find_element_by_id(upnp_enable_element).is_selected()
+			# driver.find_element_by_id(upnp_enable_port_mapping_element).is_selected()
+			# driver.find_element_by_id(upnp_name_element).send_keys(upnp_name_value.format(upnp_name=(''.join(str(elt) for elt in upnp_name))))
+			# driver.find_element_by_id(upnp_type_element)
+			# driver.find_element_by_xpath(network_menu_submit_element).click()
+			# driver.switch_to.default_content()
+			# print("sucessfully saved")
+			
+			# Wait.until(ec.element_to_be_clickable((By.ID, ddns_settings_element))).click()
+			# Wait.until(ec.element_to_be_clickable((By.ID, network_menu_iframe_element))).click()
+			# Wait.until(ec.frame_to_be_available_and_switch_to_it((By.ID, network_menu_iframe_element)))
+			# print(network_menu_ddns_message_value.format(network_menu_ddns_message=(''.join(str(elt) for elt in network_menu_ddns_message))))
+			# driver.find_element_by_id(ddns_enable_element).is_selected()
+			# driver.find_element_by_id(ddns_service_provider_element)
+			# driver.find_element_by_id(dns_custom_server_url_element).send_keys(dns_custom_server_url_value.format(ddns_url=(''.join(str(elt) for elt in ddns_url))))
+			# driver.find_element_by_id(dns_custom_server_username_element).send_keys(dns_custom_server_username_value.format(ddns_username=(''.join(str(elt) for elt in ddns_username))))
+			# driver.find_element_by_id(dns_custom_server_password_element).send_keys(dns_custom_server_password_value.format(ddns_password=(''.join(str(elt) for elt in ddns_password))))
+			# driver.find_element_by_xpath(network_menu_submit_element).click()
+			# driver.switch_to.default_content()
+			# print("sucessfully saved")
+			
+			Wait.until(ec.element_to_be_clickable((By.ID, email_settings_element))).click()
+			Wait.until(ec.element_to_be_clickable((By.ID, network_menu_iframe_element))).click()
+			Wait.until(ec.frame_to_be_available_and_switch_to_it((By.ID, network_menu_iframe_element)))
+			print(network_menu_email_message_value.format(network_menu_email_message=(''.join(str(elt) for elt in network_menu_email_message))))
+			driver.find_element_by_id(email_enable_element).is_selected()
+			camera_image_osd_video_title_element
+			driver.find_element_by_id(email_smtp_username_element).clear()
+			driver.find_element_by_id(email_smtp_username_element).send_keys(email_smtp_username_value.format(email_username=(''.join(str(elt) for elt in email_username))))
+			driver.find_element_by_id(email_smtp_sender_element).clear()
+			driver.find_element_by_id(email_smtp_sender_element).send_keys(email_smtp_sender_value.format(email_address=(''.join(str(elt) for elt in email_address))))
+			driver.find_element_by_id(email_smtp_password_element).clear()
+			driver.find_element_by_id(email_smtp_password_element).send_keys(email_smtp_password_value.format(email_password=(''.join(str(elt) for elt in email_password))))
+			driver.find_element_by_id(email_smtp_server_element).clear()
+			driver.find_element_by_id(email_smtp_server_element).send_keys(email_smtp_server_value.format(email_mailserver=(''.join(str(elt) for elt in email_mailserver))))
+			driver.find_element_by_id(email_smtp_port_element).clear()
+			driver.find_element_by_id(email_smtp_port_element).send_keys(email_smtp_port_value.format(email_port_number=(''.join(str(elt) for elt in email_port_number))))
+			driver.find_element_by_id(email_smtp_email1_element).clear()
+			driver.find_element_by_id(email_smtp_email1_element).send_keys(email_smtp_email1_value.format(email_receipient_1=(''.join(str(elt) for elt in email_receipient_1))))
+			driver.find_element_by_id(email_smtp_email2_element).clear()
+			driver.find_element_by_id(email_smtp_email2_element).send_keys(email_smtp_email2_value.format(email_receipient_2=(''.join(str(elt) for elt in email_receipient_2))))
+			driver.find_element_by_id(email_smtp_encry_ssl_element)
+			driver.find_element_by_id(email_smtp_encry_tls_element)
+			driver.find_element_by_xpath(network_menu_submit_element).click()
+			driver.switch_to.default_content()
+			print("sucessfully saved")
+		
+			Wait.until(ec.element_to_be_clickable((By.ID, ftp_settings_element))).click()
+			Wait.until(ec.element_to_be_clickable((By.ID, network_menu_iframe_element))).click()
+			Wait.until(ec.frame_to_be_available_and_switch_to_it((By.ID, network_menu_iframe_element)))
+			print(network_menu_ftp_message_value.format(network_menu_ftp_message=(''.join(str(elt) for elt in network_menu_ftp_message))))
+			driver.find_element_by_id(ftp_server_address_element).send_keys(ftp_server_address_value.format(ftp_server=(''.join(str(elt) for elt in ftp_server))))
+			driver.find_element_by_id(ftp_server_address_element).clear()
+			driver.find_element_by_id(ftp_server_address_element).send_keys(ftp_server_address_value.format(ftp_server=(''.join(str(elt) for elt in ftp_server))))
+			driver.find_element_by_id(ftp_server_port_element).send_keys(ftp_server_port_value.format(ftp_port=(''.join(str(elt) for elt in ftp_port))))
+			driver.find_element_by_id(ftp_server_port_element).clear()
+			driver.find_element_by_id(ftp_server_port_element).send_keys(ftp_server_port_value.format(ftp_port=(''.join(str(elt) for elt in ftp_port))))
+			driver.find_element_by_id(ftp_username_element).send_keys(ftp_username_value.format(ftp_username=(''.join(str(elt) for elt in ftp_username))))
+			driver.find_element_by_id(ftp_username_element).clear()
+			driver.find_element_by_id(ftp_username_element).send_keys(ftp_username_value.format(ftp_username=(''.join(str(elt) for elt in ftp_username))))
+			driver.find_element_by_id(ftp_password_element).send_keys(ftp_password_value.format(ftp_password=(''.join(str(elt) for elt in ftp_password))))
+			driver.find_element_by_id(ftp_password_element).clear()
+			driver.find_element_by_id(ftp_password_element).send_keys(ftp_password_value.format(ftp_password=(''.join(str(elt) for elt in ftp_password))))
+			driver.find_element_by_id(ftp_over_ssl_tls_ftps_element)
+			driver.find_element_by_id(ftp_storage_settings_storage_path_type_element)
+			driver.find_element_by_id(ftp_storage_settings_storage_parent_element)
+			driver.find_element_by_id(ftp_storage_settings_storage_child_directory_type_element)
+			driver.find_element_by_id(ftp_storage_settings_storage_alarm_directory_type_element)
+			driver.find_element_by_id(ftp_storage_settings_storage_pre_record_sec_element)
+			driver.find_element_by_xpath(network_menu_submit_element).click()
+			driver.switch_to.default_content()
+			print("sucessfully saved")
+			
+			# Wait.until(ec.element_to_be_clickable((By.ID, vlan_settings_element))).click()
+			# Wait.until(ec.element_to_be_clickable((By.ID, network_menu_iframe_element))).click()
+			# Wait.until(ec.frame_to_be_available_and_switch_to_it((By.ID, network_menu_iframe_element)))
+			# print(network_menu_vlan_message_value.format(network_menu_vlan_message=(''.join(str(elt) for elt in network_menu_vlan_message))))
+			# driver.find_element_by_id(vlan_enable_element).is_selected()
+			# driver.find_element_by_id(vlan_id_element).send_keys(vlan_id_value.format(vlan_id=(''.join(str(elt) for elt in vlan_id))))
+			# driver.find_element_by_id(vlan_ip_octect_1_element).send_keys(vlan_ip_octect_1_value.format(vlan_ip_octect_1=(''.join(str(elt) for elt in vlan_ip_octect_1))))
+			# driver.find_element_by_id(vlan_ip_octect_2_element).send_keys(vlan_ip_octect_2_value.format(vlan_ip_octect_2=(''.join(str(elt) for elt in vlan_ip_octect_2))))
+			# driver.find_element_by_id(vlan_ip_octect_3_element).send_keys(vlan_ip_octect_3_value.format(vlan_ip_octect_3=(''.join(str(elt) for elt in vlan_ip_octect_3))))
+			# driver.find_element_by_id(vlan_ip_octect_4_element).send_keys(vlan_ip_octect_4_value.format(vlan_ip_octect_4=(''.join(str(elt) for elt in vlan_ip_octect_4))))
+			# driver.find_element_by_id(vlan_subnetmask_octect_1_element).send_keys(vlan_subnetmask_octect_1_value.format(vlan_subnetmask_octect_1=(''.join(str(elt) for elt in vlan_subnetmask_octect_1))))
+			# driver.find_element_by_id(vlan_subnetmask_octect_2_element).send_keys(vlan_subnetmask_octect_2_value.format(vlan_subnetmask_octect_2=(''.join(str(elt) for elt in vlan_subnetmask_octect_2))))
+			# driver.find_element_by_id(vlan_subnetmask_octect_3_element).send_keys(vlan_subnetmask_octect_3_value.format(vlan_subnetmask_octect_3=(''.join(str(elt) for elt in vlan_subnetmask_octect_3))))
+			# driver.find_element_by_id(vlan_subnetmask_octect_4_element).send_keys(vlan_subnetmask_octect_4_value.format(vlan_subnetmask_octect_4=(''.join(str(elt) for elt in vlan_subnetmask_octect_4))))
+			# driver.find_element_by_id(vlan_gateway_octect_1_element).send_keys(vlan_gateway_octect_1_value.format(vlan_gateway_octect_1=(''.join(str(elt) for elt in vlan_gateway_octect_1))))
+			# driver.find_element_by_id(vlan_gateway_octect_2_element).send_keys(vlan_gateway_octect_2_value.format(vlan_gateway_octect_2=(''.join(str(elt) for elt in vlan_gateway_octect_2))))
+			# driver.find_element_by_id(vlan_gateway_octect_3_element).send_keys(vlan_gateway_octect_3_value.format(vlan_gateway_octect_3=(''.join(str(elt) for elt in vlan_gateway_octect_3))))
+			# driver.find_element_by_id(vlan_gateway_octect_4_element).send_keys(vlan_gateway_octect_4_value.format(vlan_gateway_octect_4=(''.join(str(elt) for elt in vlan_gateway_octect_4))))
+			# driver.find_element_by_xpath(network_menu_submit_element).click()
+			# driver.switch_to.default_content()
+			# print("sucessfully saved")
+
+			# Wait.until(ec.element_to_be_clickable(driver.find_element_by_id(pppoe_settings_element))).click()			
+			# Wait.until(ec.element_to_be_clickable((By.ID, network_menu_iframe_element))).click()
+			# Wait.until(ec.frame_to_be_available_and_switch_to_it((By.ID, network_menu_iframe_element)))
+			# print(network_menu_pppoe_message_value.format(network_menu_pppoe_message=(''.join(str(elt) for elt in network_menu_pppoe_message))))
+			# driver.find_element_by_id(pppoe_enable_element).is_selected()
+			# driver.find_element_by_id(pppoe_user_element).send_keys(pppoe_user_value.format(pppoe_user=(''.join(str(elt) for elt in pppoe_user))))
+			# driver.find_element_by_id(pppoe_password_element).send_keys(pppoe_password_value.format(pppoe_password=(''.join(str(elt) for elt in pppoe_password))))
+			# driver.find_element_by_id(pppoe_password_confirm_element).send_keys(pppoe_password_confirm_value.format(pppoe_password_confirm=(''.join(str(elt) for elt in pppoe_password_confirm))))
+			# driver.find_element_by_xpath(network_menu_submit_element).click()
+			# driver.switch_to.default_content()
+			# print("sucessfully saved")
+			
+			# Wait.until(ec.element_to_be_clickable((By.ID, snmp_settings_element))).click()
+			# Wait.until(ec.element_to_be_clickable((By.ID, network_menu_iframe_element))).click()
+			# Wait.until(ec.frame_to_be_available_and_switch_to_it((By.ID, network_menu_iframe_element)))
+			# print(network_menu_snmp_message_value.format(network_menu_snmp_message=(''.join(str(elt) for elt in network_menu_snmp_message))))
+			# driver.find_element_by_id(snmp_v1_enable_element).is_selected()
+			# driver.find_element_by_id(snmp_v2c_enable_element).is_selected()
+			# driver.find_element_by_id(snmp_v2c_write_community_element).clear()
+			# driver.find_element_by_id(snmp_v2c_write_community_element).send_keys(snmp_v2c_write_community_value.format(snmp_v2c_write_community=(''.join(str(elt) for elt in snmp_v2c_write_community))))
+			# driver.find_element_by_id(snmp_v2c_read_community_element).clear()
+			# driver.find_element_by_id(snmp_v2c_read_community_element).send_keys(snmp_v2c_read_community_value.format(snmp_v2c_read_community=(''.join(str(elt) for elt in snmp_v2c_read_community))))
+
+			# driver.find_element_by_id(snmp_v3_enable_element).is_selected()
+			# driver.find_element_by_id(snmp_v3_enable_element).click()
+			# driver.find_element_by_id(snmp_v3_read_security_name_element).clear()
+			# driver.find_element_by_id(snmp_v3_read_security_name_element).send_keys(snmp_v3_read_security_name_value.format(snmp_v3_read_security_name=(''.join(str(elt) for elt in snmp_v3_read_security_name))))
+			# # driver.find_element_by_id(snmp_v3_read_level_of_security_element)
+			# Select(driver.find_element_by_id(snmp_v3_read_level_of_security_element)).select_by_value(snmp_v3_read_level_of_security_value.format(snmp_v3_read_level_of_security=(''.join(str(elt) for elt in snmp_v3_read_level_of_security))))
+			# Select(driver.find_element_by_id(snmp_v3_read_level_of_security_element)).select_by_value(snmp_v3_read_level_of_security_value.format(snmp_v3_read_level_of_security=(''.join(str(elt) for elt in snmp_v3_read_level_of_security))))
+			# driver.find_element_by_id(snmp_v3_write_security_name_element).clear()
+			# driver.find_element_by_id(snmp_v3_write_security_name_element).send_keys(snmp_v3_write_security_name_value.format(snmp_v3_write_security_name=(''.join(str(elt) for elt in snmp_v3_write_security_name))))
+			# # driver.find_element_by_id(snmp_v3_write_level_of_security_element)
+			# Select(driver.find_element_by_id(snmp_v3_read_level_of_security_element)).select_by_value(snmp_v3_write_level_of_security_value.format(snmp_v3_write_level_of_security=(''.join(str(elt) for elt in snmp_v3_write_level_of_security))))
+			# Select(driver.find_element_by_id(snmp_v3_read_level_of_security_element)).select_by_value(snmp_v3_write_level_of_security_value.format(snmp_v3_write_level_of_security=(''.join(str(elt) for elt in snmp_v3_write_level_of_security))))
+			# driver.find_element_by_id(snmp_port_element)
+			# driver.find_element_by_xpath(network_menu_submit_element).click()
+			# driver.switch_to.default_content()
+			# print("sucessfully saved")
+
+			Wait.until(ec.element_to_be_clickable((By.XPATH, x8021x_settings_element))).click()
+			Wait.until(ec.element_to_be_clickable((By.ID, network_menu_iframe_element))).click()
+			Wait.until(ec.frame_to_be_available_and_switch_to_it((By.ID, network_menu_iframe_element)))
+			print(network_menu_x8021x_message_value.format(network_menu_x8021x_message=(''.join(str(elt) for elt in network_menu_x8021x_message))))
+			driver.find_element_by_xpath(x8021x_enable_element).is_selected()
+			driver.find_element_by_id(x8021x_eapol_version_element)
+			driver.find_element_by_id(x8021x_user_element).send_keys(x8021x_user_value.format(x8021x_user=(''.join(str(elt) for elt in x8021x_user))))
+			driver.find_element_by_id(x8021x_user_element).clear()
+			driver.find_element_by_id(x8021x_user_element).send_keys(x8021x_user_value.format(x8021x_user=(''.join(str(elt) for elt in x8021x_user))))
+			driver.find_element_by_id(x8021x_password_element).send_keys(x8021x_password_value.format(x8021x_password=(''.join(str(elt) for elt in x8021x_password))))
+			driver.find_element_by_id(x8021x_password_element).clear()
+			driver.find_element_by_id(x8021x_password_element).send_keys(x8021x_password_value.format(x8021x_password=(''.join(str(elt) for elt in x8021x_password))))
+			driver.find_element_by_id(x8021x_password_confirm_element).send_keys(x8021x_password_confirm_value.format(x8021x_password_confirm=(''.join(str(elt) for elt in x8021x_password_confirm))))
+			driver.find_element_by_id(x8021x_password_confirm_element).clear()
+			driver.find_element_by_id(x8021x_password_confirm_element).send_keys(x8021x_password_confirm_value.format(x8021x_password_confirm=(''.join(str(elt) for elt in x8021x_password_confirm))))
+			driver.find_element_by_xpath(network_menu_submit_element).click()
+			driver.switch_to.default_content()
+			print("sucessfully saved")
+	
+			# driver.find_element_by_id(bonjour_settings_element)
+			# Wait.until(ec.element_to_be_clickable((By.ID, network_menu_iframe_element))).click()
+			# Wait.until(ec.frame_to_be_available_and_switch_to_it((By.ID, network_menu_iframe_element)))
+			# driver.find_element_by_xpath(bonjour_enabler_element).is_selected()
+			# driver.find_element_by_xpath(bonjour_name_element).send_keys(bonjour_name_value.format(bonjour_name=(''.join(str(elt) for elt in bonjour_name))))
+			# driver.find_element_by_xpath(network_menu_submit_element).click()
+			# driver.switch_to.default_content()
+			# print("sucessfully saved")
+			
+			# Wait.until(ec.element_to_be_clickable((By.ID, rtmp_settings_element))).click()
+			# Wait.until(ec.element_to_be_clickable((By.ID, network_menu_iframe_element))).click()
+			# Wait.until(ec.frame_to_be_available_and_switch_to_it((By.ID, network_menu_iframe_element)))
+			# print(network_menu_rtmp_message_value.format(network_menu_rtmp_message=(''.join(str(elt) for elt in network_menu_rtmp_message))))
+			# driver.find_element_by_id(rtmp_enable_element).is_selected()
+			# driver.find_element_by_id(rtmp_stream_type_element)
+			# driver.find_element_by_id(rtmp_server_address_element).send_keys(rtmp_server_address_value.format(rtmp_server_address=(''.join(str(elt) for elt in rtmp_server_address))))
+			# driver.find_element_by_xpath(network_menu_submit_element).click()
+			# driver.switch_to.default_content()
+			# print("sucessfully saved")
+			
+			# Program Execution - Date & Time
+			print(date_time_menu_message_value.format(date_time_menu_message=(''.join(str(elt) for elt in date_time_menu_message))))
+			# Wait.until(ec.element_to_be_clickable(driver.find_element_by_xpath(date_time_menu_element))).click()
+			Wait.until(ec.element_to_be_clickable((By.XPATH, date_time_menu_element))).click()
+			
+			Wait.until(ec.element_to_be_clickable((By.ID, date_time_menu_iframe_element))).click()	
+			Wait.until(ec.frame_to_be_available_and_switch_to_it((By.ID, date_time_menu_iframe_element)))
+			
+			# Select(driver.find_element_by_id(date_time_timezone_element).select_by_value(date_time_timezone_value.format(timezone=(''.join(str(elt) for elt in timezone)))))
+			Select(driver.find_element_by_id(date_time_daylight_saving_time_element)).select_by_value(date_time_daylight_saving_time_value.format(daylight_saving_time=(''.join(str(elt) for elt in daylight_saving_time))))
+			driver.find_element_by_id(date_time_ntp_server_enable_element).click()
+			driver.find_element_by_id(date_time_ntp_server_address_element).clear()
+			driver.find_element_by_id(date_time_ntp_server_address_element).send_keys(date_time_ntp_server_address_value.format(ntp_server_address=(''.join(str(elt) for elt in ntp_server_address))))
+			driver.find_element_by_id(date_time_ntp_server_sync_enable_element).click()
+			Select(driver.find_element_by_id(date_time_ntp_server_update_interval_element)).select_by_value(date_time_ntp_server_update_interval_value.format(ntp_server_update_interval=(''.join(str(elt) for elt in ntp_server_update_interval))))
+			driver.find_element_by_id(date_time_submit_element).click()
+			driver.switch_to.default_content()
+			driver.switch_to.default_content()
+			driver.switch_to.default_content()
+
+			# Program Execution - System Information
+			print(system_information_menu_message_value.format(system_information_menu_message=(''.join(str(elt) for elt in system_information_menu_message))))
+			Wait.until(ec.element_to_be_clickable(driver.find_element_by_id(system_menu_element))).click()
+			
+			Wait.until(ec.element_to_be_clickable((By.ID, system_menu_iframe_element))).click()	
+			Wait.until(ec.frame_to_be_available_and_switch_to_it((By.ID, system_menu_iframe_element)))
+			driver.find_element_by_id(system_device_name_element).send_keys(system_device_name_value.format(camera_name=(''.join(str(elt) for elt in camera_name))))
+			driver.find_element_by_xpath(system_submit_element).click()
+			driver.switch_to.default_content()
+			
+			# Program Execution - Maintenance
+			print(maintenance_menu_message_value.format(maintenance_menu_message=(''.join(str(elt) for elt in maintenance_menu_message))))
+			Wait.until(ec.element_to_be_clickable(driver.find_element_by_id(maintenance_menu_element))).click()
+			
+			Wait.until(ec.element_to_be_clickable((By.ID, maintenance_menu_iframe_element))).click()	
+			Wait.until(ec.frame_to_be_available_and_switch_to_it((By.ID, maintenance_menu_iframe_element)))
+			
+			driver.find_element_by_id(auto_reboot_enable_element).is_selected()
+			driver.find_element_by_id(auto_reboot_enable_element).click()
+			Select(driver.find_element_by_id(auto_reboot_day_element)).select_by_value(auto_reboot_day_value.format(auto_reboot_day=(''.join(str(elt) for elt in auto_reboot_day))))
+			Select(driver.find_element_by_id(auto_reboot_time_element)).select_by_value(auto_reboot_time_value.format(auto_reboot_time=(''.join(str(elt) for elt in auto_reboot_time))))
+			
+			driver.find_element_by_xpath(maintenance_menu_submit_element)
+			
+			driver.switch_to.default_content()
+		else:
+			print(camera_offline_message_value.format(camera_name=(''.join(str(elt) for elt in camera_name)),
+													  field_of_view=(''.join(str(elt) for elt in field_of_view))))
+			pass
